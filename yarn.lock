@@ -23,9 +23,9 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@hotwired/turbo@https://github.com/kolide/turbo.git#7d83a56306efdffa9eb3a0a00f3402b435222225":
+"@hotwired/turbo@https://github.com/kolide/turbo.git#fbed8a9":
   version "7.0.0-beta.8"
-  resolved "https://github.com/kolide/turbo.git#7d83a56306efdffa9eb3a0a00f3402b435222225"
+  resolved "https://github.com/kolide/turbo.git#fbed8a95ab2abc125b17150f41e952145e520047"
 
 "@rails/actioncable@^6.0.0":
   version "6.1.3"

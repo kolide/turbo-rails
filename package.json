@@ -13,7 +13,7 @@
     "release": "npm publish && git commit -am \"$npm_package_name v$npm_package_version\" && git push"
   },
   "dependencies": {
-    "@hotwired/turbo": "https://github.com/kolide/turbo.git#7d83a56306efdffa9eb3a0a00f3402b435222225",
+    "@hotwired/turbo": "https://github.com/kolide/turbo.git#fbed8a9",
     "@rails/actioncable": "^6.0.0"
   },
   "devDependencies": {
