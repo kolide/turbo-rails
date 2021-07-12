@@ -1480,6 +1480,7 @@ class Visit {
       this.render((async () => {
         this.cacheSnapshot();
         this.adapter.visitRendered(this);
+        window.dispatchEvent(new HashChangeEvent("hashchange"));
       }));
     }
   }
@@ -1986,6 +1987,7 @@ class Navigator {
     if (responseHTML) {
       const snapshot = PageSnapshot.fromHTMLString(responseHTML);
       await this.view.renderPage(snapshot);
+      window.scroll(0, 0);
       this.view.clearSnapshotCache();
     }
   }
