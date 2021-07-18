@@ -628,6 +628,12 @@ class FormSubmission {
     }
   }
   requestFailedWithResponse(request, response) {
+    dispatch("turbo:submit-failed", {
+      target: this.formElement,
+      detail: Object.assign({
+        formSubmission: this
+      }, this.result)
+    });
     this.result = {
       success: false,
       fetchResponse: response
