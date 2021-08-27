@@ -366,7 +366,6 @@ class FetchRequest {
         throw error;
       }
     } finally {
-      console.log("test", this, this.delegate);
       this.delegate.requestFinished(this);
     }
   }
@@ -642,16 +641,13 @@ class FormSubmission {
     this.delegate.formSubmissionErrored(this, error);
   }
   requestFinished(request) {
-    console.log("in requestFinished");
     this.state = FormSubmissionState.stopped;
-    console.log("in requestFinished state=stoppped");
     dispatch("turbo:submit-end", {
       target: this.formElement,
       detail: Object.assign({
         formSubmission: this
       }, this.result)
     });
-    console.log("in requestFinished dispatched turbo:submit-end");
     this.delegate.formSubmissionFinished(this);
   }
   requestMustRedirect(request) {
@@ -1638,7 +1634,6 @@ class BrowserAdapter {
   constructor(session) {
     this.progressBar = new ProgressBar;
     this.showProgressBar = () => {
-      console.log("in showProgressBar");
       this.progressBar.show();
     };
     this.session = session;
@@ -1653,14 +1648,10 @@ class BrowserAdapter {
     visit.loadCachedSnapshot();
   }
   visitRequestStarted(visit) {
-    console.log("in visitRequestStarted");
     this.progressBar.setValue(0);
-    console.log("in visitRequestStarted this.progressBar.setValue(0)");
     if (visit.hasCachedSnapshot() || visit.action != "restore") {
-      console.log("in visitRequestStarted this.showProgressBarAfterDelay()");
-      this.showProgressBarAfterDelay();
+      this.showVisitProgressBarAfterDelay();
     } else {
-      console.log("in visitRequestStarted this.showProgressBar()");
       this.showProgressBar();
     }
   }
@@ -1680,7 +1671,7 @@ class BrowserAdapter {
   }
   visitRequestFinished(visit) {
     this.progressBar.setValue(1);
-    this.hideProgressBar();
+    this.hideVisitProgressBar();
   }
   visitCompleted(visit) {}
   pageInvalidated() {
@@ -1689,32 +1680,33 @@ class BrowserAdapter {
   visitFailed(visit) {}
   visitRendered(visit) {}
   formSubmissionStarted(formSubmission) {
-    console.log("in formSubmissionStarted");
     this.progressBar.setValue(0);
-    console.log("in formSubmissionStarted this.progressBar.setValue(0)");
-    this.showProgressBarAfterDelay();
-    console.log("in formSubmissionStarted this.showProgressBarAfterDelay()");
+    this.showFormProgressBarAfterDelay();
   }
   formSubmissionFinished(formSubmission) {
-    console.log("in formSubmissionFinished");
     this.progressBar.setValue(1);
-    console.log("in formSubmissionFinished - this.progressBar.setValue(1)");
-    this.hideProgressBar();
-    console.log("in formSubmissionFinished - this.hideProgressBar()");
+    this.hideFormProgressBar();
   }
-  showProgressBarAfterDelay() {
-    console.log("in showProgressBarAfterDelay");
-    if (this.progressBarTimeout != null) {
-      console.log("in showProgressBarAfterDelay setting timeout", this.session.progressBarDelay);
-      this.progressBarTimeout = window.setTimeout(this.showProgressBar, this.session.progressBarDelay);
+  showVisitProgressBarAfterDelay() {
+    this.visitProgressBarTimeout = window.setTimeout(this.showProgressBar, this.session.progressBarDelay);
+  }
+  hideVisitProgressBar() {
+    this.progressBar.hide();
+    if (this.visitProgressBarTimeout != null) {
+      window.clearTimeout(this.visitProgressBarTimeout);
+      delete this.visitProgressBarTimeout;
     }
   }
-  hideProgressBar() {
+  showFormProgressBarAfterDelay() {
+    if (this.formProgressBarTimeout == null) {
+      this.formProgressBarTimeout = window.setTimeout(this.showProgressBar, this.session.progressBarDelay);
+    }
+  }
+  hideFormProgressBar() {
     this.progressBar.hide();
-    if (this.progressBarTimeout != null) {
-      console.log("we have a timeout");
-      window.clearTimeout(this.progressBarTimeout);
-      delete this.progressBarTimeout;
+    if (this.formProgressBarTimeout != null) {
+      window.clearTimeout(this.formProgressBarTimeout);
+      delete this.formProgressBarTimeout;
     }
   }
   reload() {
